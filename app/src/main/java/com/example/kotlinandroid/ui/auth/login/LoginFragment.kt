@@ -5,22 +5,28 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.example.kotlinandroid.R
+import com.example.kotlinandroid.databinding.FragmentLoginBinding
+import com.example.kotlinandroid.ui.auth.signup.SignUpViewModel
+import com.example.kotlinandroid.ui.auth.signup.SignupFragment
+import com.example.kotlinandroid.uitls.ManageFragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    lateinit var binding: FragmentLoginBinding
+    lateinit var viewModel: LoginViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,18 +41,32 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+
+        val manageFragment = ManageFragment(requireActivity())
+        binding.signupBtn.setOnClickListener {
+            manageFragment.changeFragmentWithBackStack(
+                SignupFragment(),
+                R.id.auth_container,
+                "login"
+            )
+        }
+
+        binding.loginBtn.setOnClickListener(View.OnClickListener {
+            view->
+
+            val email = binding.emailEt.text.toString()
+            val password = binding.passwordEt.text.toString()
+            viewModel.loginUser(email,password)
+
+                    })
+
+        return binding.root
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment LoginFragment.
-         */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =

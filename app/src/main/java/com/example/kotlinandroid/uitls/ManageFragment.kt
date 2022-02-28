@@ -11,7 +11,7 @@ class ManageFragment (val fragmentActivity: FragmentActivity) {
         transaction.commit()
     }
 
-    fun changeFragmentWithBackStack(fragment: Fragment, layoutId:Int,tag:String?) {
+     fun changeFragmentWithBackStack(fragment: Fragment, layoutId:Int,tag:String?) {
         val transaction =  fragmentActivity.supportFragmentManager.beginTransaction()
         transaction.replace(layoutId,fragment).addToBackStack(tag)
         transaction.commit()
