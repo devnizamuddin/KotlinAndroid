@@ -1,6 +1,8 @@
 package com.example.kotlinandroid.ui.auth.login
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +13,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.kotlinandroid.R
 import com.example.kotlinandroid.databinding.FragmentLoginBinding
+import com.example.kotlinandroid.repository.AuthRepository
+import com.example.kotlinandroid.ui.MainActivity
 import com.example.kotlinandroid.ui.auth.signup.SignUpViewModel
 import com.example.kotlinandroid.ui.auth.signup.SignupFragment
+import com.example.kotlinandroid.uitls.CustomAlert
+import com.example.kotlinandroid.uitls.CustomKey
+import com.example.kotlinandroid.uitls.CustomKey.Companion.TAG
 import com.example.kotlinandroid.uitls.ManageFragment
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -26,6 +31,7 @@ class LoginFragment : Fragment() {
     private var param2: String? = null
     lateinit var binding: FragmentLoginBinding
     lateinit var viewModel: LoginViewModel
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +51,13 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
+        binding.tittle.setOnClickListener {
+
+            AuthRepository().manageStatus()
+        }
+
+
+
         val manageFragment = ManageFragment(requireActivity())
         binding.signupBtn.setOnClickListener {
             manageFragment.changeFragmentWithBackStack(
@@ -54,20 +67,27 @@ class LoginFragment : Fragment() {
             )
         }
 
-        binding.loginBtn.setOnClickListener(View.OnClickListener {
-            view->
+        binding.loginBtn.setOnClickListener {
 
             val email = binding.emailEt.text.toString()
             val password = binding.passwordEt.text.toString()
-            viewModel.loginUser(email,password)
+            viewModel.loginUser(email, password).observe(viewLifecycleOwner, { response ->
 
-                    })
+                if (response.equals(CustomKey.SUCCESSFUL)) {
+                    startActivity(Intent(activity, MainActivity::class.java))
+                }
+                Log.d(TAG, "onCreateView: $response")
+                CustomAlert.showSnackBar(binding.root, response)
+
+            })
+
+        }
 
         return binding.root
     }
 
     companion object {
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             LoginFragment().apply {

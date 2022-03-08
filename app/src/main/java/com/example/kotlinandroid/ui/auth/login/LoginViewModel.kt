@@ -13,18 +13,17 @@ class LoginViewModel() : ViewModel() {
 
 
     val authRepository: AuthRepository = AuthRepository()
+    var response: MutableLiveData<String> = MutableLiveData()
 
     fun loginUser(
         email: String,
         password: String,
     ): MutableLiveData<String> {
 
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-
+        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password))
             return authRepository.login(email, password)
-        } else {
-        }
-        return authRepository.login(email, password)
+        else
+            return response
 
 
     }
